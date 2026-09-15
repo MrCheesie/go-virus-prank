@@ -62,6 +62,27 @@ Press <code>^C</code> or <code>c-C</code> or <kbd>Ctrl</kbd>+<kbd>C</kbd> to sto
 </details>
 
 <details>
-<summary>How do I cget my friend to install it?</summary>
+<summary>How do I get my friend to install it?</summary>
 That's an issue (iss-you), not an iss-me. Get creative.
+</details>
+
+<details>
+<summary>Why did you choose Go over Python?</summary>
+Because Go compiles easily to an executable that also works cross-platform, so your unsuspecting friend doesn't need Go or Python or any external tools, which makes it easier for them to get pranked.
+</details>
+
+<details>
+<summary>Will my friend realise how to stop it?</summary>
+The terminal will open when program runs, you can minimize or hide it, but the icon will still be in the dock. If your friend is remotely smart, they will close the terminal, which stops the program.
+</details>
+
+
+<details>
+<summary>Why is it not on Linux?</summary>
+As far am I'm aware, there is no native text-to-speech command (like <code>say</code> on MacOS) we can use on Linux. It is possible to achieve this via a Go module or package, but I don't know much about Go, and wanted to keep the binary as small as possible.
+</details>
+
+<details>
+<summary>Why don't you rebuild it in Rust?</summary>
+Get out.
 </details>
