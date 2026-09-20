@@ -2,32 +2,37 @@
 
 package main
 
-import "fmt"
-import "strings"
 import (
-    "log"
-    "os"
-    "os/exec"
-    "time"
-    "math/rand"
-    "os/signal"
-    "syscall"
+	"fmt"
+	"log"
+	"math/rand"
+	"os"
+	"os/signal"
+	"os/exec"
+	"strings"
+	"syscall"
+	"time"
 )
 
 func speak(text string) {
-	escaped_text := strings.Replace(text, "'", "''", -1)
-	cmd := exec.Command("powershell",
-            "-Command",
-            "$voice = New-Object -ComObject SAPI.SpVoice; $voice.Speak('{}')",escaped_text);
+	// Escape single quotes for a PowerShell single-quoted string.
+	escapedText := strings.ReplaceAll(text, "'", "''")
+
+	script := fmt.Sprintf(
+		"$voice = New-Object -ComObject SAPI.SpVoice; $voice.Speak('%s')",
+		escapedText,
+	)
+
+	cmd := exec.Command("powershell", "-NoProfile", "-Command", script)
+
 	if err := cmd.Run(); err != nil {
-		log.Println("Could not play exit message:", err);
+		log.Println("Could not play message:", err)
 	}
 }
 
 func main() {
-	// Actual phrases to say
-    var phrases = [...]string {
-	    "This device is possesed",
+	phrases := []string{
+			    "This device is possesed",
 	    "Press control plus C to perform exorcism",
 	    "Insert evil laugh",
 	    "I'm still less evil than Chrome, it collects all your data.",
@@ -57,35 +62,25 @@ func main() {
 	    "Press command plus Q to stop me",
 	    "What do you call a robot that runs into walls?.. WALL - E",
 	    "I am hungry, feed me code!",
-    }
+	}
 
-
-    // Handle ^C
 	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+
 	go func() {
 		<-sigChan
-
-
+		fmt.Println("\nStopping...")
 		os.Exit(0)
 	}()
 
-	// Main loop
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+
 	for {
-		// Get a random phrase
-		choice := rand.Intn(len(phrases));
-		phrase := phrases[choice];
+		phrase := phrases[rng.Intn(len(phrases))]
 
-	   	output, err := exec.Command("say", "-v", "Zarvox", phrase).Output();
-		fmt.Println(phrase);
+		fmt.Println(phrase)
+		speak(phrase)
 
-	   	if err != nil {
-			log.Fatal(err);
-			log.Fatal(string(output));
-			break
-		}
-		time.Sleep(10 * time.Second);
-
+		time.Sleep(10 * time.Second)
 	}
-
 }
